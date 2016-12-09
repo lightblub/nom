@@ -1,10 +1,10 @@
 # nom
 > A hyper-readable yet complex programming language inspired by Ruby
 
-[![Travis](https://img.shields.io/travis/nanalan/nom.svg)]()
+[![Travis](https://img.shields.io/travis/nanalan/nom.svg)](https://travis-ci.org/nanalan/nom)
 [![Gitter](https://img.shields.io/badge/chat-on%20gitter-ff69b4.svg)](https://gitter.im/nanalan/nom)
 [![Node.js](https://img.shields.io/badge/node->=%206-green.svg)](https://nodejs.org/en/)
-[![Licence](https://img.shields.io/badge/licence-MIT-blue.svg)]()
+[![Licence](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENCE)
 
 **Note:** nom is totally unstable and unfinished right now.
 

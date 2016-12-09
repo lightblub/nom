@@ -19,42 +19,45 @@ fi
 
 set -e
 
-if which node > /dev/null; then
-  if which nodejs > /dev/null; then
+if ! which node > /dev/null; then
+  if [ ! which nodejs > /dev/null ]; then
     printf "${RED}"
     echo 'Node.js is not installed'
-    printf "${normal}"
+    printf "${NORMAL}"
 
     exit 1
   fi
 fi
 
-if which git > /dev/null; then
+if ! which git > /dev/null; then
   printf "${RED}"
   echo 'git is not installed'
-  printf "${normal}"
+  printf "${NORMAL}"
 
   exit 1
 fi
 
-if [ ! -d "/usr/share/nom" ]; then
-  printf "${BLUE}"
-  echo 'nom is already installed.'
-  printf "${normal}"
-  read -r -p 'Update? [y/N] ' response
+if [ -d "$HOME/.nom" ]; then
+  printf "${YELLOW}"
+  printf "nom is already installed or something is occupying ${BOLD}$HOME/.nom${NORMAL}${YELLOW}."
+  printf "\n"
+  read -r -p "Remove ${BOLD}$HOME/.nom${NORMAL}${YELLOW} and update? [y/N] ${NORMAL}" response
 
   if [[ ! $response =~ ^([yY][eE][sS]|[yY])$ ]]; then
     exit 1
+  else
+    rm -rf ~/.nom > /dev/null
+    printf "\n"
   fi
 fi
 
 printf "Cloning repository..."
-git clone https://github.com/nanalan/nom.git /usr/share/nom > /dev/null
-printf "${green}"
-printf 'done'
-printf "${normal}\n"
+git clone https://github.com/nanalan/nom.git ~/.nom --quiet > /dev/null
+printf "${GREEN}"
+printf ' done'
+printf "${NORMAL}\n"
 
-cd /usr/share/nom
+cd ~/.nom
 printf "Installing dependencies..."
 
 if which yarn > /dev/null; then
@@ -63,51 +66,49 @@ else
   npm install > /dev/null
 fi
 
-printf "${green}"
-printf 'done'
-printf "${normal}\n"
+printf "${GREEN}"
+printf ' done'
+printf "${NORMAL}\n"
 
 printf "Compiling grammar..."
 
-./node_modules/nearley/bin/nearleyc.js src/grammar/grammar.ne > /src/grammar/grammar.js
+./node_modules/nearley/bin/nearleyc.js src/grammar/grammar.ne -o src/grammar/grammar.js 2> /dev/null
 
-printf "${green}"
-printf 'done'
-printf "${normal}\n"
+printf "${GREEN}"
+printf ' done'
+printf "${NORMAL}\nSymlinking binary..."
 
-printf "Linking binary..."
-
-if [ ! npm link > /dev/null ]; then
-  if [ ! sudo npm link > /dev/null ]; then
-    printf "${red}"
-    printf 'fail'
-    printf "${normal}\n"
+if ! npm link > /dev/null; then
+  if ! sudo npm link > /dev/null; then
+    printf "${RED}"
+    printf ' fail'
+    printf "${NORMAL}\n"
 
     exit 1
   fi
 fi
 
-if [ ! which nom > /dev/null ]; then
-  printf "${red}"
-  printf 'fail'
-  printf "${normal}\n"
+if ! which nom > /dev/null; then
+  printf "${RED}"
+  printf ' fail'
+  printf "${NORMAL}\n"
 
   exit 1
 fi
 
-printf "${red}"
-printf 'done'
-printf "${normal}\n"
+printf "Symlinking binary... ${GREEN}"
+printf ' done'
+printf "${NORMAL}\n"
 
 # We're finished
-printf "${blue}"
-echo '  _ __   ___  _ __ ___  '
-echo " | '_ \\ / _ \\| '_ \` _ \\ "
-echo ' | | | | (_) | | | | | | '
-echo ' |_| |_|\\___/|_| |_| |_| '
-printf "${normal}\n"
+printf "${BLUE}"
+echo '   _ __   ___  _ __ ___  '
+echo "  | '_ \\ / _ \\| '_ \` _ \\ "
+echo '  | | | | (_) | | | | | | '
+echo '  |_| |_|\___/|_| |_| |_| '
+printf "${NORMAL}\n"
 
-printf "Installed nom "
-printf "${blue}v"
-nom -v
-printf "${normal}\n"
+printf "  Installed nom "
+printf "${BLUE}v"
+nom hello
+printf "${NORMAL}\n"

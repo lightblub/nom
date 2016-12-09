@@ -13,6 +13,12 @@ const args = require('minimist')(process.argv.slice(2), {
 })
 const command = args._.join(' ')
 
+if (command === 'hello') {
+  // Used in install script
+  process.stdout.write(version)
+  return
+}
+
 let lastCheckedForUpdate = 0
 try {
   lastCheckedForUpdate = fs.readFileSync(__dirname + '/../lastupdated', 'utf8')

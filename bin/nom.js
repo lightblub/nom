@@ -26,6 +26,7 @@ try {
 const needsUpdateCheck = Date.now() - lastCheckedForUpdate > 1000 * 60 * 60 * 24
 
 if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
+if (command === 'update') needsUpdateCheck = false
 
 // Check for new version
 ;(!needsUpdateCheck ? ((a, b) => b(true)) : request)('https://raw.githubusercontent.com/nanalan/nom/master/package.json', (err, res, body) => {
@@ -54,6 +55,16 @@ if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
   |_| |_|\\___/|_| |_| |_|
 `))
     console.log(center(`nom ${chalk.cyan('v' + version)}\n`, { columns: 28 }))
+  } else if (command === 'update') {
+    request('https://raw.githubusercontent.com/nanalan/nom/master/update.sh', (err, res, body) => {
+      if (!err && res.statusCode == 200) {
+        require('child_process').execSync('rm -rf ~/.nom', { stdio: 'inherit' })
+        fs.writeFileSync('~/.nom.sh', body, 'utf8')
+        require('child_process').execSync('sh .nom.sh && rm -rf .nom.sh', {
+          stdio: 'inherit'
+        })
+      } else console.error(chalk.red(err))
+    })
   } else {
     // TODO
     console.log('  nom doesn\'t have a proper cli yet, sorry\n')

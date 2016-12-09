@@ -13,12 +13,12 @@ nom can be installed by running one of the following commands in your terminal.
 
 **via curl**
 ```sh
-sh -c "$(curl -fsSL https://raw.githubuserconent.com/nanalan/nom/master/install.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/nanalan/nom/master/install.sh)"
 ```
 
 **via wget**
 ```sh
-sh -c "$(wget https://raw.githubuserconent.com/nanalan/nom/master/install.sh -O -)"
+sh -c "$(wget https://raw.githubusercontent.com/nanalan/nom/master/install.sh -O -)"
 ```
 
 ### Windows

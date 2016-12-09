@@ -22,7 +22,7 @@ const needsUpdateCheck = Date.now() - lastCheckedForUpdate > 1000 * 60 * 60 * 24
 if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
 
 // Check for new version
-;(!needsUpdateCheck ? ((a, b) => b(true)) : request)('https://raw.githubuserconent.com/nanalan/nom/master/package.json', (err, res, body) => {
+;(!needsUpdateCheck ? ((a, b) => b(true)) : request)('https://raw.githubusercontent.com/nanalan/nom/master/package.json', (err, res, body) => {
   if (!err && res.statusCode == 200) {
     try {
       const remoteVersion = JSON.parse(body).version

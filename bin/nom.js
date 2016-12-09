@@ -80,10 +80,9 @@ if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
     catch(err) { console.error(chalk.red(`Could not read file ${chalk.bold(command)}\n`)) }
 
     nom(src)
-      .catch(err => console.error(chalk.red(err), '\n'))
+      .catch(err => console.error(err, '\n'))
       .then(js => {
-        out.write(js)
-        out.end()
+        out.write(require('util').inspect(js, { depth: null, colors: typeof args.o == 'undefined' }))
         console.error('\n')
       })
   }

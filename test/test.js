@@ -142,6 +142,48 @@ describe('parser', () => {
         )
       )
     })
+
+    describe('blocks', () => {
+      it('empty', () =>
+        parser.parse(`{}`).should.eventually.deep.equal(
+          [
+            ['expr', [
+              'block',
+              null
+            ]]
+          ]
+        )
+      )
+
+      it('nonempty', () =>
+        parser.parse(`{
+          pls
+          work
+        }`).should.eventually.deep.equal(
+          [
+            ['expr', [
+              'block',
+              [
+                [
+                  'expr',
+                  [
+                    'variable',
+                    'pls'
+                  ]
+                ],
+                [
+                  'expr',
+                  [
+                    'variable',
+                    'work'
+                  ]
+                ]
+              ]
+            ]]
+          ]
+        )
+      )
+    })
   })
 
   describe('maths', () => {

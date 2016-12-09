@@ -1,6 +1,6 @@
 {
   "name": "nom",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "description": "A hyper-readable yet complex programming language inspired by Ruby",
   "main": "src/index.js",
   "repository": {
@@ -16,7 +16,6 @@
   "author": "Alex Bates <16batesa@gmail.com> (http://alex.bates.is/)",
   "license": "MIT",
   "dependencies": {
-    "array-uniq": "^1.0.3",
     "center-text": "^0.1.0",
     "chalk": "^1.1.3",
     "minimist": "^1.2.0",

@@ -23,7 +23,7 @@ let lastCheckedForUpdate = 0
 try {
   lastCheckedForUpdate = fs.readFileSync(__dirname + '/../lastupdated', 'utf8')
 } catch(e) {}
-const needsUpdateCheck = Date.now() - lastCheckedForUpdate > 1000 * 60 * 60 * 24
+let needsUpdateCheck = Date.now() - lastCheckedForUpdate > 1000 * 60 * 60 * 24
 
 if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
 if (command === 'update') needsUpdateCheck = false
@@ -37,7 +37,7 @@ if (command === 'update') needsUpdateCheck = false
       if (version !== remoteVersion) {
         console.log(chalk.cyan('\n  A new version of nom is available!'))
         console.log(center(chalk.blue(`v${version} -> v${remoteVersion}`), { columns: 36 }))
-        console.log(chalk.cyan(`Run ${chalk.bold(`nom update`)} to update.`))
+        console.log(chalk.cyan(`  Run ${chalk.bold(`nom update`)} to update.\n`))
       }
     } catch (err) {}
   } else if (needsUpdateCheck) {

@@ -1,11 +1,12 @@
 # nom
 > A hyper-readable yet complex programming language inspired by Ruby
 
-**Note:** nom is totally unstable and unfinished right now.
+[![Travis](https://img.shields.io/travis/nanalan/nom.svg)]()
+[![Gitter](https://img.shields.io/badge/chat-on%20gitter-ff69b4.svg)](https://gitter.im/nanalan/nom)
+[![Node.js](https://img.shields.io/badge/node->=%206-green.svg)](https://nodejs.org/en/)
+[![Licence](https://img.shields.io/badge/licence-MIT-blue.svg)]()
 
-[![Travis](https://img.shields.io/travis/nanalan/nom.svg?style=flat-square)]()
-[![Gitter](https://img.shields.io/badge/chat-on%20gitter-e20354.svg?style=flat-square)](https://gitter.im/nanalan/nom)
-[![Node.js](https://img.shields.io/badge/node.js-%206%20-779ecb.svg?style=flat-square)](https://nodejs.org/en/)
+**Note:** nom is totally unstable and unfinished right now.
 
 ## Getting Started
 You will need:

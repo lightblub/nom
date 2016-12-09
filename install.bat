@@ -14,7 +14,7 @@ IF %ERRORLEVEL% NEQ 0 (
 
 IF EXIST %USERPROFILE%\.nom (
   ECHO nom is already installed or something is occupying %USERPROFILE%\.nom
-  SET /P response=Remove %USERPROFILE%\.nom and update? [y\N] 
+  SET /P response=Remove %USERPROFILE%\.nom and update? [y\N]
   IF %response% NEQ y (
     EXIT /B
   ) ELSE (
@@ -57,12 +57,13 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 ECHO Symlinking binary... done
 
-ECHO    _ __    ___   _ __ ___  
+ECHO    _ __    ___   _ __ ___
 ECHO   ^| '_ \\ / _ \\^| '_ \` _\\
-ECHO   ^| ^| ^| ^|  (_)  ^| ^| ^| ^| ^| ^| 
-ECHO   ^|_^| ^|_^| \___//^|_^| ^|_^| ^|_^| 
+ECHO   ^| ^| ^| ^|  (_)  ^| ^| ^| ^| ^| ^|
+ECHO   ^|_^| ^|_^| \___//^|_^| ^|_^| ^|_^|
 ECHO.
 
 ECHO|set /p="  Installed nom v"
 nom hello
 ECHO.
+DEL %USERPROFILE%\.nom.bat

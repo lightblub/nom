@@ -5,6 +5,7 @@ const request = require('request')
 const chalk = require('chalk')
 const center = require('center-text')
 const fs = require('fs')
+const os = require('os')
 const args = require('minimist')(process.argv.slice(2), {
   boolean: ['version', 'help'],
   alias: {
@@ -13,6 +14,7 @@ const args = require('minimist')(process.argv.slice(2), {
   }
 })
 const command = args._.join(' ')
+const WINDOWS = os.platform() === 'win32'
 
 if (command === 'hello') {
   // Used in install script
@@ -55,15 +57,19 @@ if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
 `))
     console.log(center(`nom ${chalk.cyan('v' + version)}\n`, { columns: 28 }))
   } else if (command === 'update') {
-    request('https://raw.githubusercontent.com/nanalan/nom/master/install.sh', (err, res, body) => {
-      if (!err && res.statusCode == 200) {
-        require('child_process').execSync('rm -rf ~/.nom', { stdio: 'inherit' })
-        fs.writeFileSync(`${process.env.HOME}/.nom.sh`, body, 'utf8')
-        require('child_process').execSync('sh ~/.nom.sh && rm -rf ~/.nom.sh', {
-          stdio: 'inherit'
-        })
-      } else console.error(chalk.red(err))
-    })
+    if (WINDOWS) {
+      require('child_process').execSync('@powershell -Command "Invoke-WebRequest http://raw.githubusercontent.com/nanalan/nom/master/install.bat -OutFile %USERPROFILE%\.nom.bat; Start-Process \"cmd.exe\" \"/c %USERPROFILE%\.nom.bat\""', { stdio: 'inherit' })
+    } else {
+      request('https://raw.githubusercontent.com/nanalan/nom/master/install.sh', (err, res, body) => {
+        if (!err && res.statusCode == 200) {
+          require('child_process').execSync('rm -rf ~/.nom', { stdio: 'inherit' })
+          fs.writeFileSync(`${process.env.HOME}/.nom.sh`, body, 'utf8')
+          require('child_process').execSync('sh ~/.nom.sh && rm -rf ~/.nom.sh', {
+            stdio: 'inherit'
+          })
+        } else console.error(chalk.red(err))
+      })
+    }
   } else if (args.h || command === '') {
     console.log(`  ${chalk.cyan(`nom ${chalk.bold('file.nom')}`)}    compile ${chalk.bold('file.nom')}
   ${chalk.blue(`  -o ${chalk.bold('file.js')}`)}    output to ${chalk.bold('file.js')}

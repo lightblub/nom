@@ -3,7 +3,7 @@
 
 **Note:** nom is totally unstable and unfinished right now.
 
-## get nom
+## Getting Started
 You will need:
 - **git**
 - **Node.js** version 6.0.0 or later
@@ -22,4 +22,8 @@ sh -c "$(wget https://raw.githubusercontent.com/nanalan/nom/master/install.sh -O
 ```
 
 ### Windows
-Currently there is no way to install nom using Windows. If anybody wants to port over the [installation script](https://raw.githubusercontent.com/nanalan/nom/master/install.sh) to Batch or PowerShell, please do- contributions are welcome!
+nom can be installed by running the following command in `cmd.exe`, aka Command Prompt.
+
+```
+@powershell -Command "Invoke-WebRequest http://raw.githubusercontent.com/nanalan/nom/master/install.bat -OutFile %USERPROFILE%\.nom.bat; Start-Process \"cmd.exe\" \"/c %USERPROFILE%\.nom.bat\""
+```

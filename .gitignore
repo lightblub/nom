@@ -4,3 +4,4 @@ src/grammar/grammar.js
 *.swp
 .DS_Store
 lastupdated
+examples

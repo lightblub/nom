@@ -11,8 +11,8 @@ module.exports = {
 
       const results = uniq(p.results)
       if (results.length > 1) {
-        console.warn('WARN: ambiguous grammar')
-        console.dir(results.map((tree, l) => [l, tree]), { colors: true, depth: null })
+        console.error('WARN: ambiguous grammar')
+        console.error(require('util').inspect(results.map((tree, l) => [l, tree]), { colors: true, depth: null }))
       }
       if (results.length === 0) throw new SyntaxError('Empty')
 

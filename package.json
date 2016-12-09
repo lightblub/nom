@@ -1,6 +1,6 @@
 {
   "name": "nom",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "description": "A hyper-readable yet complex programming language inspired by Ruby",
   "main": "src/index.js",
   "repository": {

@@ -6,9 +6,10 @@ const chalk = require('chalk')
 const center = require('center-text')
 const fs = require('fs')
 const args = require('minimist')(process.argv.slice(2), {
-  boolean: ['version'],
+  boolean: ['version', 'help'],
   alias: {
     v: 'version',
+    h: 'help',
   }
 })
 const command = args._.join(' ')
@@ -46,7 +47,7 @@ if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
 
   if (needsUpdateCheck) fs.writeFileSync(__dirname + '/../lastupdated', Date.now(), 'utf8')
 
-  if (args.v === true) {
+  if (args.v) {
     console.log(chalk.cyan(`   _ __   ___  _ __ ___
   | '_ \\ / _ \\| '_ \` _ \\
   | | | | (_) | | | | | |
@@ -63,8 +64,27 @@ if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
         })
       } else console.error(chalk.red(err))
     })
+  } else if (args.h || command === '') {
+    console.log(`  ${chalk.cyan(`nom ${chalk.bold('file.nom')}`)}    compile ${chalk.bold('file.nom')}
+  ${chalk.blue(`  -o ${chalk.bold('file.js')}`)}    output to ${chalk.bold('file.js')}
+  ${chalk.blue(`  -h`)}            help
+  ${chalk.blue(`  -v`)}            version
+
+  ${chalk.cyan(`nom update`)}      update to the latest version
+`)
   } else {
-    // TODO
-    console.log('  nom doesn\'t have a proper cli yet, sorry\n')
+    const nom = require('../src/index.js')
+    const out = args.o ? fs.createWriteStream(args.o) : process.stdout
+
+    try { var src = fs.readFileSync(command) }
+    catch(err) { console.error(chalk.red(`Could not read file ${chalk.bold(command)}\n`)) }
+
+    nom(src)
+      .catch(err => console.error(chalk.red(err), '\n'))
+      .then(js => {
+        out.write(js)
+        out.end()
+        console.error('\n')
+      })
   }
 })

@@ -310,27 +310,35 @@ describe('parser', () => {
         )
       )
 
-      it('one argument w/o brackets', () =>
-        parser.parse(`bar 6`).should.eventually.deep.equal(
+      it('single argument w/o brackets', () =>
+        parser.parse(`bar 6 ^2`).should.eventually.deep.equal(
           [
             ['expr', [
-              'call',
+              '^',
               [
-                'variable',
-                'bar'
+                'call',
+                [
+                  'variable',
+                  'bar'
+                ],
+                [
+                  [
+                    'num',
+                    '6'
+                  ]
+                ]
               ],
               [
-                [
-                  'num',
-                  '6'
-                ]
+                'num',
+                '2'
               ]
-            ]]
+            ]
+          ]
           ]
         )
       )
 
-      it('one argument w/  brackets', () =>
+      it('single argument w/  brackets', () =>
         parser.parse(`bar(6)`).should.eventually.deep.equal(
           [
             ['expr', [

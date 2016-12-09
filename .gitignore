@@ -1,0 +1,5 @@
+node_modules
+src/grammar/grammar.js
+*.log
+*.swp
+.DS_Store

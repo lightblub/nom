@@ -2,3 +2,5 @@ language: node_js
 node_js:
   - "7"
   - "6"
+before_script:
+  - "./node_modules/nearley/bin/nearleyc.js src/grammar/grammar.ne -o src/grammar/grammar.js"

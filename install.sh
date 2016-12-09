@@ -100,7 +100,7 @@ printf 'done'
 printf "${normal}\n"
 
 # We're finished
-printf "${green}"
+printf "${blue}"
 echo '  _ __   ___  _ __ ___  '
 echo " | '_ \\ / _ \\| '_ \` _ \\ "
 echo ' | | | | (_) | | | | | | '
@@ -108,4 +108,6 @@ echo ' |_| |_|\\___/|_| |_| |_| '
 printf "${normal}\n"
 
 printf "Installed nom "
+printf "${blue}v"
 nom -v
+printf "${normal}\n"

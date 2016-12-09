@@ -3,3 +3,4 @@ src/grammar/grammar.js
 *.log
 *.swp
 .DS_Store
+lastupdated

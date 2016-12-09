@@ -22,4 +22,4 @@ sh -c "$(wget https://raw.githubusercontent.com/nanalan/nom/master/install.sh -O
 ```
 
 ### Windows
-Currently there is no way to install nom using Windows. If anybody wants to port over the [installation script](https://raw.githubuserconent.com/nanalan/nom/master/install.sh) to Batch or PowerShell, please do- contributions are welcome!
+Currently there is no way to install nom using Windows. If anybody wants to port over the [installation script](https://raw.githubusercontent.com/nanalan/nom/master/install.sh) to Batch or PowerShell, please do- contributions are welcome!

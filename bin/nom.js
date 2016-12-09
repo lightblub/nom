@@ -25,8 +25,8 @@ try {
 } catch(e) {}
 let needsUpdateCheck = Date.now() - lastCheckedForUpdate > 1000 * 60 * 60 * 24
 
-if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
 if (command === 'update') needsUpdateCheck = false
+if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
 
 // Check for new version
 ;(!needsUpdateCheck ? ((a, b) => b(true)) : request)('https://raw.githubusercontent.com/nanalan/nom/master/package.json', (err, res, body) => {
@@ -38,10 +38,8 @@ if (command === 'update') needsUpdateCheck = false
         console.log(chalk.cyan('\n  A new version of nom is available!'))
         console.log(center(chalk.blue(`v${version} -> v${remoteVersion}`), { columns: 36 }))
         console.log(chalk.cyan(`  Run ${chalk.bold(`nom update`)} to update.\n`))
-      }
+      } else console.log(chalk.blue('  No updates found.\n'))
     } catch (err) {}
-  } else if (needsUpdateCheck) {
-    console.log(chalk.blue('  No updates found.\n'))
   } else {
     console.log('')
   }

@@ -4,15 +4,9 @@ expression -> _ AS _ {% d => ['expr', d[1]] %}
 
 # Brackets
 B_ -> "(" ___ AS ___ ")" {% d => [d[2]] %}
-Bs -> "(" ___ (AS "," ___):+ AS ___ ("," ___):? ")" {% d => {
-  // Mulitple arguments
-  let args = d[2].map(d => d[0])
-  args.push(d[3])
-
-  return args
-} %}
-    | B_              {% d => d[0] %}
-    | __ AS ___       {% d => [d[1]] %}
+Bs -> "(" argList  ")" {% d => d[1] %}
+    #| B_              {% d => d[0] %}
+    #| __ AS ___       {% d => [d[1]] %}
     #| "(" _ ")"      {% d => [] %}
 B  -> B_              {% d => d[0][0] %}
     | num B_          {% d => ['*', d[0], d[1][0]] %}

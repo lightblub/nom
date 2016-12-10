@@ -71,16 +71,14 @@ if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
       })
     }
   } else if (args.h || command === '') {
-    console.log(`  ${chalk.cyan(`nom ${chalk.bold('file.nom')}`)}    compile ${chalk.bold('file.nom')}
-  ${chalk.blue(`  -o ${chalk.bold('file.js')}`)}    output to ${chalk.bold('file.js')}
-  ${chalk.blue(`  -h`)}            help
-  ${chalk.blue(`  -v`)}            version
+    console.log(`  ${chalk.cyan(`nom ${chalk.bold('file.nom')}`)}    run ${chalk.bold('file.nom')}
+  ${chalk.blue(`          -h`)}    ${chalk.dim('help')}
+  ${chalk.blue(`          -v`)}    ${chalk.dim('version')}
 
-  ${chalk.cyan(`nom update`)}      update to the latest version
+    ${chalk.cyan(`nom update`)}    update to the latest version
 `)
   } else {
     const nom = require('../src/index.js')
-    const out = args.o ? fs.createWriteStream(args.o) : process.stdout
 
     try { var src = fs.readFileSync(command) }
     catch(err) { console.error(chalk.red(`Could not read file ${chalk.bold(command)}\n`)) }
@@ -88,8 +86,8 @@ if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
     nom(src)
       .catch(err => console.error(err, '\n'))
       .then(js => {
-        out.write(require('util').inspect(js, { depth: null, colors: typeof args.o == 'undefined' }))
-        console.error('\n')
+        console.dir(js, { depth: null, colors: typeof args.o == 'undefined' })
+        console.log('')
       })
   }
 })

@@ -7,7 +7,13 @@ lines -> lines nl line  {% d => [...d[0], d[2]] %}
        | line           {% d => [d[0]] %}
 
 line  -> _ expression _ {% d => d[1] %}
-       #| __             {% d => null %}
+       | _ methodDef _  {% d => d[1] %}
+
+methodDef -> ident _ "(" argList ")" _ block {% d => ['methodDef', d[0], d[3], d[6]] %}
+argList   -> ___ argList "," ___ arg ___ {% d => [...d[1], d[4]] %}
+           | arg                         {% d => [d[0]] %}
+arg       -> ident                       {% d => d[0] %}
+
 
 nl      -> _ comment:? "\r":? "\n" {% d => null %}
 comment -> ("--"|"//"|"#") [^\n]:* {% d => null %}

@@ -90,8 +90,12 @@ describe('parser', () => {
         parser.parse(`someVariable`).should.eventually.deep.equal(
           [
             ['expr', [
-              'variable',
-              'someVariable'
+              'call',
+              [
+                'variable',
+                'someVariable'
+              ],
+              []
             ]]
           ]
         )
@@ -101,8 +105,12 @@ describe('parser', () => {
         parser.parse(`SomeClass`).should.eventually.deep.equal(
           [
             ['expr', [
-              'class',
-              'SomeClass'
+              'call',
+              [
+                'class',
+                'SomeClass'
+              ],
+              []
             ]]
           ]
         )
@@ -112,17 +120,22 @@ describe('parser', () => {
         parser.parse(`SOME_CONSTANT`).should.eventually.deep.equal(
           [
             ['expr', [
-              'constant',
-              'SOME_CONSTANT'
+              'call',
+              [
+                'constant',
+                'SOME_CONSTANT'
+              ],
+              []
             ]]
           ]
         )
       )
 
       it('paths', () =>
-        parser.parse(`a.b.c`).should.eventually.deep.equal(
+        parser.parse(`a.b.c.d`).should.eventually.deep.equal(
           [
             ['expr', [
+              'call',
               [
                 [
                   'variable',
@@ -131,12 +144,17 @@ describe('parser', () => {
                 [
                   'variable',
                   'b'
+                ],
+                [
+                  'variable',
+                  'c'
+                ],
+                [
+                  'variable',
+                  'd'
                 ]
               ],
-              [
-                'variable',
-                'c'
-              ]
+              []
             ]]
           ]
         )
@@ -149,7 +167,7 @@ describe('parser', () => {
           [
             ['expr', [
               'block',
-              null
+              []
             ]]
           ]
         )
@@ -167,19 +185,72 @@ describe('parser', () => {
                 [
                   'expr',
                   [
-                    'variable',
-                    'pls'
+                    'call',
+                    [
+                      'variable',
+                      'pls'
+                    ],
+                    []
                   ]
                 ],
                 [
                   'expr',
                   [
-                    'variable',
-                    'work'
+                    'call',
+                    [
+                      'variable',
+                      'work'
+                    ],
+                    []
                   ]
-                ]
+                ],
               ]
             ]]
+          ]
+        )
+      )
+
+      it('named', () =>
+        parser.parse(`method () {}`).should.eventually.deep.equal(
+          [
+            ['methodDef', 
+              [
+                'variable',
+                'method'
+              ],
+              [],
+              [
+                "block",
+                []
+              ]
+            ]
+          ]
+        )
+      )
+
+      it('named w/ arguments', () =>
+        parser.parse(`method (arg1, arg2) {}`).should.eventually.deep.equal(
+          [
+            ['methodDef',
+              [
+                'variable',
+                'method'
+              ],
+              [
+                [
+                  'variable',
+                  'arg1'
+                ],
+                [
+                  'variable',
+                  'arg2'
+                ]
+              ],
+              [
+                "block",
+                []
+              ]
+            ]
           ]
         )
       )
@@ -336,7 +407,7 @@ describe('parser', () => {
 
     describe('function calls', () => {
       it('no arguments', () =>
-        parser.parse(`foo()`).should.eventually.deep.equal(
+        parser.parse(`foo`).should.eventually.deep.equal(
           [
             ['expr', [
               'call',
@@ -352,7 +423,7 @@ describe('parser', () => {
         )
       )
 
-      it('single argument w/o brackets', () =>
+      it('single', () =>
         parser.parse(`bar 6 ^2`).should.eventually.deep.equal(
           [
             ['expr', [
@@ -365,8 +436,11 @@ describe('parser', () => {
                 ],
                 [
                   [
-                    'num',
-                    '6'
+                    'expr',
+                    [
+                      'num',
+                      '6'
+                    ]
                   ]
                 ]
               ],
@@ -380,28 +454,8 @@ describe('parser', () => {
         )
       )
 
-      it('single argument w/  brackets', () =>
-        parser.parse(`bar(6)`).should.eventually.deep.equal(
-          [
-            ['expr', [
-              'call',
-              [
-                'variable',
-                'bar'
-              ],
-              [
-                [
-                  'num',
-                  '6'
-                ]
-              ]
-            ]]
-          ]
-        )
-      )
-
       it('multiple arguments', () =>
-        parser.parse(`baz(1, 2)`).should.eventually.deep.equal(
+        parser.parse(`baz 1, 2`).should.eventually.deep.equal(
           [
             ['expr', [
               'call',
@@ -411,12 +465,18 @@ describe('parser', () => {
               ],
               [
                 [
-                  'num',
-                  '1'
+                  'expr',
+                  [
+                    'num',
+                    '1'
+                  ]
                 ],
                 [
-                  'num',
-                  '2'
+                  'expr',
+                  [
+                    'num',
+                    '2'
+                  ]
                 ]
               ]
             ]]

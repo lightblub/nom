@@ -11,7 +11,8 @@
     "test": "mocha"
   },
   "bin": {
-    "nom": "bin/nom.js"
+    "nom": "bin/nom.js",
+    "nomjs": "bin/nomjs.js"
   },
   "author": "Alex Bates <16batesa@gmail.com> (http://alex.bates.is/)",
   "license": "MIT",

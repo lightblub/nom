@@ -38,13 +38,13 @@ if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
       const remoteVersion = JSON.parse(body).version
 
       if (version !== remoteVersion) {
-        console.log(chalk.cyan('\n  A new version of nom is available!'))
-        console.log(center(chalk.blue(`v${version} -> v${remoteVersion}`), { columns: 36 }))
-        console.log(chalk.cyan(`  Run ${chalk.bold(`nom update`)} to update.\n`))
+        console.error(chalk.cyan('\n  A new version of nom is available!'))
+        console.error(center(chalk.blue(`v${version} -> v${remoteVersion}`), { columns: 36 }))
+        console.error(chalk.cyan(`  Run ${chalk.bold(`nom update`)} to update.\n`))
       } else console.log(chalk.blue('  No updates found.\n'))
     } catch (err) {}
   } else {
-    console.log('')
+    console.error('')
   }
 
   if (needsUpdateCheck) fs.writeFileSync(__dirname + '/../lastupdated', Date.now(), 'utf8')
@@ -84,10 +84,10 @@ if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
     catch(err) { console.error(chalk.red(`Could not read file ${chalk.bold(command)}\n`)) }
 
     nom(src)
-      .catch(err => console.error(err, '\n'))
+      .catch(err => console.error(err))
       .then(js => {
         console.dir(js, { depth: null, colors: typeof args.o == 'undefined' })
-        console.log('')
+        console.error('')
       })
   }
 })

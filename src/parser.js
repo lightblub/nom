@@ -6,7 +6,7 @@ module.exports = {
     const p = new nearley.Parser(grammar.ParserRules, grammar.ParserStart)
 
     try {
-      p.feed(code + '\n')
+      p.feed(code)
 
       let already = []
       const results = p.results.filter(tree => {
@@ -22,11 +22,11 @@ module.exports = {
       })
 
       if (results.length > 1) {
-        console.error('WARN: ambiguous grammar:')
         for (let tree of results) {
-          console.error(require('util').inspect(tree, { colors: true, depth: null }))
+          console.error(JSON.stringify(tree)/*require('util').inspect(tree, { colors: true, depth: null })*/, '\n\n_________\n\n')
         }
-        console.error('\n')
+
+        console.error(`WARN: ambiguous grammar (${results.length}) ^\n\n`)
       }
       if (results.length === 0) throw new SyntaxError('Empty')
 

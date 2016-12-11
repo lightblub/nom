@@ -14,8 +14,8 @@ IF %ERRORLEVEL% NEQ 0 (
 
 IF EXIST %USERPROFILE%\.nom (
   ECHO nom is already installed or something is occupying %USERPROFILE%\.nom
-  SET /P response=Remove %USERPROFILE%\.nom and update? [y\N]
-  IF %response% NEQ y (
+  SET /P response=Remove %USERPROFILE%\.nom and update? [y\N] 
+  IF "%response%" NEQ "y" (
     EXIT /B
   ) ELSE (
     RMDIR /S /Q %USERPROFILE%\.nom

@@ -1,6 +1,6 @@
 {
   "name": "nomlang",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "A functional programming language where everything is a chain",
   "main": "src/index.js",
   "repository": {
@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "mocha",
-    "postinstall": "nearleyc src/grammar/grammar.ne -o src/grammar/grammar.js 2> /dev/null"
+    "postinstall": "node make.js"
   },
   "bin": {
     "nom": "bin/nom.js",

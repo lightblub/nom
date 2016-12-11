@@ -61,9 +61,9 @@ cd ~/.nom
 printf "Installing dependencies..."
 
 if which yarn > /dev/null; then
-  yarn > /dev/null
+  yarn --ignore-scripts > /dev/null
 else
-  npm install > /dev/null
+  npm install --ignore-scripts > /dev/null
 fi
 
 printf "${GREEN}"

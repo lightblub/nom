@@ -14,7 +14,7 @@ IF %ERRORLEVEL% NEQ 0 (
 
 IF EXIST %USERPROFILE%\.nom (
   ECHO nom is already installed or something is occupying %USERPROFILE%\.nom
-  SET /P response=Remove %USERPROFILE%\.nom and update? [y\N] 
+  SET /P response=Remove %USERPROFILE%\.nom and update? [y\N]
   IF "%response%" NEQ "y" (
     EXIT /B
   ) ELSE (
@@ -33,9 +33,9 @@ ECHO|set /p="Installing dependencies..."
 
 WHERE yarn > nul
 IF %ERRORLEVEL% NEQ 0 (
-  CMD /C "npm install > nul"
+  CMD /C "npm install --ignore-scripts > nul"
 ) ELSE (
-  CMD /C "yarn > nul"
+  CMD /C "yarn --ignore-scripts > nul"
 )
 
 ECHO  done

@@ -7,10 +7,11 @@ const center = require('center-text')
 const fs = require('fs')
 const os = require('os')
 const args = require('minimist')(process.argv.slice(2), {
-  boolean: ['version', 'help'],
+  boolean: ['version', 'help', 'tree'],
   alias: {
     v: 'version',
     h: 'help',
+    t: 'tree',
   }
 })
 const command = args._.join(' ')
@@ -76,6 +77,7 @@ if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
     console.log(`  ${chalk.cyan(`nom ${chalk.bold('file.nom')}`)}    run ${chalk.bold('file.nom')}
   ${chalk.blue(`          -h`)}    ${chalk.dim('help')}
   ${chalk.blue(`          -v`)}    ${chalk.dim('version')}
+  ${chalk.blue(`          -t`)}    ${chalk.dim('tree')}
 
     ${chalk.cyan(`nom update`)}    update to the latest version
 `)
@@ -83,37 +85,52 @@ if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
     const nom = require('../src/index.js')
     const normalizeNewline = require('normalize-newline')
 
+    chalk.enabled = true
+
     try {
       var src = normalizeNewline(fs.readFileSync(command, 'utf8'))
     } catch(err) {
-      console.error('  ' + chalk.bgRed.white.bold(` FILE READ ERROR!! `) + chalk.bgWhite.red.bold(' ' + command + ' ') + '\n')
+      console.error('  ' + chalk.bgRed.white.bold(` READFILE ERROR!! `) + chalk.bgWhite.red.bold(' ' + command + ' ') + '\n')
       process.exit(1)
     }
 
-    nom(src)
+    if (!args.tree) process.stderr.write(chalk.blue(`  Compiling...`))
+
+    nom(src, args)
       .catch(err => {
-        const getLineFromPos = require('get-line-from-pos')
-        const leftPad = require('left-pad')
+        if (!args.tree) console.error(chalk.bold.red(` failed\n`))
+        else console.error('')
 
-        const lines = src.split('\n')
-        const lineNo = getLineFromPos(src, err.offset)
-        const lineNoLen = lines.length.toString().length
-        const offsetLine = err.offset - lines.slice(0, lineNo-1).join('\n').length
+        if (err.offset) {
+          const getLineFromPos = require('get-line-from-pos')
+          const leftPad = require('left-pad')
 
-        console.error('  ' + chalk.bgRed.white.bold(' SYNTAX ERROR!! ') + chalk.bgWhite.red.bold(` Unexpected ${src[err.offset] === '\n' ? '↵' : src[err.offset]} on line ${lineNo} `) + '\n')
+          const lines = src.split('\n')
+          const lineNo = getLineFromPos(src, err.offset)
+          const lineNoLen = lines.length.toString().length
+          const offsetLine = err.offset - lines.slice(0, lineNo-1).join('\n').length
 
-        const nearbyLines = [lineNo - 3, lineNo - 2, lineNo - 1].filter(n => n < lines.length && n >= 0)
-        for (let n of nearbyLines) {
-          let content = lines[n]
-          console.error(chalk.blue(`  ${leftPad(n+1, lineNoLen)} ${chalk.cyan(content)}`))
+          console.error('  ' + chalk.bgRed.white.bold(' SYNTAX ERROR!! ') + chalk.bgWhite.red.bold(` Unexpected ${src[err.offset] === '\n' ? '↵' : src[err.offset]} on line ${lineNo} `) + '\n')
+
+          const nearbyLines = [lineNo - 3, lineNo - 2, lineNo - 1].filter(n => n < lines.length && n >= 0)
+          for (let n of nearbyLines) {
+            let content = lines[n]
+            console.error(chalk.blue(`  ${leftPad(n+1, lineNoLen)} ${chalk.cyan(content)}`))
+          }
+
+          console.error(chalk.bold.red(`  ${' '.repeat(offsetLine+lineNoLen+(lineNo === 1 ? 1 : 0))}^\n`))
+          process.exit(1)
+        } else {
+          console.error('  ' + chalk.bgRed.white.bold(` ${err.name.toUpperCase().replace('ERROR', ' ERROR')}!! `) + chalk.bgWhite.red.bold(` ${err.message} `) + '\n')
+          console.error(err)
+          process.exit(1)
         }
-
-        console.error(chalk.bold.red(`  ${' '.repeat(offsetLine+lineNoLen+(lineNo === 1 ? 1 : 0))}^\n`))
-        process.exit(1)
       })
-      .then(js => {
-        console.dir(js, { depth: null, colors: typeof args.o == 'undefined' })
-        console.error('')
+      .then(bytecode => {
+        if (!args.tree) console.error(chalk.cyan(` done\n`))
+        else console.error('')
+
+        process.stdout.write(JSON.stringify(bytecode))
       })
   }
 })

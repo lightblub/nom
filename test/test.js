@@ -87,13 +87,13 @@ describe('parser', () => {
 
     describe('identifiers', () => {
       it('variables', () =>
-        parser.parse(`someVariable`).should.eventually.deep.equal(
+        parser.parse(`some_variable`).should.eventually.deep.equal(
           [
             ['expr', [
               'call',
               [
                 'variable',
-                'someVariable'
+                'some_variable'
               ],
               []
             ]]

@@ -1,10 +1,10 @@
 @builtin "string.ne"
 
 # Identifiers
-# variables: lowerCamelCase
+# variables: snake_case
 # classes:   UpperCamelCase (cannot be a single character)
 # constants: SCREAMING_CAPS
-ident_ -> [a-z] [A-Za-z0-9]:* {% d => ['variable', d[0] + d[1].join('')] %}
+ident_ -> [a-z_] [_a-z0-9]:* {% d => ['variable', d[0] + d[1].join('')] %}
         | [A-Z] [A-Za-z0-9]:+ {% (d, l, r) => {
   if (d[1].join('').toUpperCase() === d[1].join('')) return r // It's actually a constant
   else return ['class', d[0] + d[1].join('')]

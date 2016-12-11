@@ -9,7 +9,7 @@ process.stdin.on('end', () => {
   run(program)
 })
 
-module.exports = function run(program=[], start=0, end) {
+const run = module.exports = (program=[], start=0, end) => {
   const check = v => {
     flags.z = v === 0
     flags.n = v  <  0
@@ -18,7 +18,6 @@ module.exports = function run(program=[], start=0, end) {
   end = end || -1
   let flags = {}
   let out = process.stdout
-  let mem = []
   let ran = 0
 
   let a = 0
@@ -61,8 +60,13 @@ module.exports = function run(program=[], start=0, end) {
       case 'cmpa': check(a-program[i++]); break
       case 'loga': out.write(a.toString()); break
 
+      // memory IS the program
+      // so a program can actually rewrite itself as it goes :O
+      case 'mrda': a = program[program[i++]]; break
+      case 'mwra': program[program[i++]] = a; break
+
       default:
-        out.write(`\n  \u001B[1m\u001B[41m FATAL ERROR!! \u001B[47m\u001B[31m Unknown opcode [${opcode}] at #${i-1} \u001B[0m  \n`)
+        out.write(`\n  \u001B[1m\u001B[41m FATAL ERROR!! \u001B[47m\u001B[31m Unknown opcode [${opcode}] at #${i-1} \u001B[0m\n\n`)
         flags.quit = true
       break
     }

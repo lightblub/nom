@@ -1,5 +1,5 @@
 # nom
-> A hyper-readable yet complex programming language inspired by Ruby
+> :sparkles: A functional programming language inspired by Ruby
 
 [![Travis](https://img.shields.io/travis/nanalan/nom.svg)](https://travis-ci.org/nanalan/nom)
 [![Gitter](https://img.shields.io/badge/chat-on%20gitter-ff69b4.svg)](https://gitter.im/nanalan/nom)

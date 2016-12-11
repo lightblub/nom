@@ -94,13 +94,8 @@ if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
       process.exit(1)
     }
 
-    if (!args.tree) process.stderr.write(chalk.blue(`  Compiling...`))
-
     nom(src, args)
       .catch(err => {
-        if (!args.tree) console.error(chalk.bold.red(` failed\n`))
-        else console.error('')
-
         if (err.offset) {
           const getLineFromPos = require('get-line-from-pos')
           const leftPad = require('left-pad')
@@ -121,16 +116,15 @@ if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
           console.error(chalk.bold.red(`  ${' '.repeat(offsetLine+lineNoLen+(lineNo === 1 ? 1 : 0))}^\n`))
           process.exit(1)
         } else {
-          console.error('  ' + chalk.bgRed.white.bold(` ${err.name.toUpperCase().replace('ERROR', ' ERROR')}!! `) + chalk.bgWhite.red.bold(` ${err.message} `) + '\n')
-          console.error(err)
+          if (err instanceof Error) console.error(err)
+          else {
+            console.error('  ' + chalk.bgRed.white.bold(` ${err.type}!! `) + chalk.bgWhite.red.bold(` ${err.message} `) + '\n')
+            if (err.help) console.error(chalk.blue('  ' + err.help.replace('\n', '\n  ') + '\n'))
+          }
+
           process.exit(1)
         }
       })
-      .then(bytecode => {
-        if (!args.tree) console.error(chalk.cyan(` done\n`))
-        else console.error('')
-
-        process.stdout.write(JSON.stringify(bytecode))
-      })
+      .then(process.exit)
   }
 })

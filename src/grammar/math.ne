@@ -1,6 +1,7 @@
 @include "literal.ne"
 
-expression -> _ AS _ {% d => ['expr', d[1]] %}
+expression -> _ AS _      {% d => ['expr', d[1]] %}
+bracketedExpression -> B_ {% d => ['expr', d[1]] %}
 
 exprList -> expression ("," ___ expression):* {% d => {
   let first = d[0]

@@ -1,7 +1,7 @@
 {
   "name": "nom",
   "version": "0.3.0",
-  "description": "A hyper-readable yet complex programming language inspired by Ruby",
+  "description": "A functional programming language inspired by Ruby",
   "main": "src/index.js",
   "repository": {
     "url": "https://github.com/nanalan/nom.git",

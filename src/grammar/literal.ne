@@ -2,8 +2,8 @@
 
 # Identifiers
 ident_ -> [A-Za-z_] [_A-Za-z0-9]:* {% d => ['variable', d[0] + d[1].join('')] %}
-        | (ident_|literal|bracketedExpression) "." ident_   {% d => [...(d[0][0][0] instanceof Array ? d[0][0] : d[0]), d[2]] %}
-        | (ident_|literal|bracketedExpression) "[" expression "]" {% d => [...(d[0][0][0] instanceof Array ? d[0][0] : d[0]), d[2]] %}
+        | (ident_|literal|bracketedExpression|methodCall) "." ident_   {% d => [...(d[0][0][0] instanceof Array ? d[0][0] : d[0]), d[2]] %}
+        | (ident_|literal|bracketedExpression|methodCall) "[" expression "]" {% d => [...(d[0][0][0] instanceof Array ? d[0][0] : d[0]), d[2]] %}
 ident  -> ident_              {% d => {
   if (d[0][0] === 'variable') return d
   else return ['path', d[0]]

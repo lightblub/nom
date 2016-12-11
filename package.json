@@ -1,14 +1,15 @@
 {
-  "name": "nom",
-  "version": "0.3.0",
-  "description": "A functional programming language inspired by Ruby",
+  "name": "nomlang",
+  "version": "0.4.1",
+  "description": "A functional programming language where everything is a chain",
   "main": "src/index.js",
   "repository": {
     "url": "https://github.com/nanalan/nom.git",
     "type": "git"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "postinstall": "./node_modules/nearley/bin/nearleyc.js src/grammar/grammar.ne -o src/grammar/grammar.js"
   },
   "bin": {
     "nom": "bin/nom.js",
@@ -32,7 +33,7 @@
     "chai-as-promised": "^6.0.0",
     "mocha": "^3.2.0"
   },
-  "engine": {
+  "engines": {
     "node": ">=6.0.0"
   }
 }

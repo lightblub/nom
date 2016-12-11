@@ -9,7 +9,7 @@ process.stdin.on('end', () => {
   run(program)
 })
 
-function run(program=[], start=0, end) {
+module.exports = function run(program=[], start=0, end) {
   const check = v => {
     flags.z = v === 0
     flags.n = v  <  0
@@ -62,7 +62,7 @@ function run(program=[], start=0, end) {
       case 'loga': out.write(a.toString()); break
 
       default:
-        out.write(`\n\u001B[1m\u001B[41m FATAL ERROR!! \u001B[47m\u001B[31m Unknown opcode [${opcode}] at #${i-1} \u001B[0m\n`)
+        out.write(`\n  \u001B[1m\u001B[41m FATAL ERROR!! \u001B[47m\u001B[31m Unknown opcode [${opcode}] at #${i-1} \u001B[0m  \n`)
         flags.quit = true
       break
     }

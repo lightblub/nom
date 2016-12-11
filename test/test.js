@@ -210,10 +210,10 @@ describe('parser', () => {
         )
       )
 
-      it('named', () =>
-        parser.parse(`method () {}`).should.eventually.deep.equal(
+      it('method definition', () =>
+        parser.parse(`def method() {}`).should.eventually.deep.equal(
           [
-            ['methodDef', 
+            ['methodDef',
               [
                 'variable',
                 'method'
@@ -228,8 +228,8 @@ describe('parser', () => {
         )
       )
 
-      it('named w/ arguments', () =>
-        parser.parse(`method (arg1, arg2) {}`).should.eventually.deep.equal(
+      it('method definition w/ arguments', () =>
+        parser.parse(`def method(arg1, arg2) {}`).should.eventually.deep.equal(
           [
             ['methodDef',
               [
@@ -406,7 +406,7 @@ describe('parser', () => {
     )
 
     describe('function calls', () => {
-      it('no arguments', () =>
+      it('no arguments, implied', () =>
         parser.parse(`foo`).should.eventually.deep.equal(
           [
             ['expr', [
@@ -423,8 +423,25 @@ describe('parser', () => {
         )
       )
 
+      it('no arguments', () =>
+        parser.parse(`foo()`).should.eventually.deep.equal(
+          [
+            ['expr', [
+              'call',
+              [
+                'variable',
+                'foo'
+              ],
+              [
+                // none
+              ]
+            ]]
+          ]
+        )
+      )
+
       it('single', () =>
-        parser.parse(`bar 6 ^2`).should.eventually.deep.equal(
+        parser.parse(`bar(6)^2`).should.eventually.deep.equal(
           [
             ['expr', [
               '^',
@@ -455,7 +472,7 @@ describe('parser', () => {
       )
 
       it('multiple arguments', () =>
-        parser.parse(`baz 1, 2`).should.eventually.deep.equal(
+        parser.parse(`baz(1, 2)`).should.eventually.deep.equal(
           [
             ['expr', [
               'call',
@@ -480,6 +497,56 @@ describe('parser', () => {
                 ]
               ]
             ]]
+          ]
+        )
+      )
+    })
+
+    describe('variable assignment', () => {
+      it('single', () =>
+        parser.parse(`foo = 123`).should.eventually.deep.equal(
+          [
+            ['varAssign',
+              [
+                [
+                  'variable',
+                  'foo'
+                ],
+              ],
+              [
+                'expr',
+                [
+                  'num',
+                  '123'
+                ]
+              ]
+            ]
+          ]
+        )
+      )
+
+      it('multiple', () =>
+        parser.parse(`foo = bar = 123`).should.eventually.deep.equal(
+          [
+            ['varAssign',
+              [
+                [
+                  'variable',
+                  'foo'
+                ],
+                [
+                  'variable',
+                  'bar'
+                ],
+              ],
+              [
+                'expr',
+                [
+                  'num',
+                  '123'
+                ]
+              ]
+            ]
           ]
         )
       )

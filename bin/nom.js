@@ -22,6 +22,8 @@ if (command === 'hello') {
   return
 }
 
+process.on('unhandledRejection', console.error)
+
 let lastCheckedForUpdate = 0
 try {
   lastCheckedForUpdate = fs.readFileSync(__dirname + '/../lastupdated', 'utf8')
@@ -79,12 +81,36 @@ if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
 `)
   } else {
     const nom = require('../src/index.js')
+    const normalizeNewline = require('normalize-newline')
 
-    try { var src = fs.readFileSync(command) }
-    catch(err) { console.error(chalk.red(`Could not read file ${chalk.bold(command)}\n`)) }
+    try {
+      var src = normalizeNewline(fs.readFileSync(command, 'utf8'))
+    } catch(err) {
+      console.error('  ' + chalk.bgRed.white.bold(` FILE READ ERROR!! `) + chalk.bgWhite.red.bold(' ' + command + ' ') + '\n')
+      process.exit(1)
+    }
 
     nom(src)
-      .catch(err => console.error(err))
+      .catch(err => {
+        const getLineFromPos = require('get-line-from-pos')
+        const leftPad = require('left-pad')
+
+        const lines = src.split('\n')
+        const lineNo = getLineFromPos(src, err.offset)
+        const lineNoLen = lines.length.toString().length
+        const offsetLine = err.offset - lines.slice(0, lineNo-1).join('\n').length
+
+        console.error('  ' + chalk.bgRed.white.bold(' SYNTAX ERROR!! ') + chalk.bgWhite.red.bold(` Unexpected ${src[err.offset] === '\n' ? '↵' : src[err.offset]} on line ${lineNo} `) + '\n')
+
+        const nearbyLines = [lineNo - 3, lineNo - 2, lineNo - 1].filter(n => n < lines.length && n >= 0)
+        for (let n of nearbyLines) {
+          let content = lines[n]
+          console.error(chalk.blue(`  ${leftPad(n+1, lineNoLen)} ${chalk.cyan(content)}`))
+        }
+
+        console.error(chalk.bold.red(`  ${' '.repeat(offsetLine+lineNoLen+(lineNo === 1 ? 1 : 0))}^\n`))
+        process.exit(1)
+      })
       .then(js => {
         console.dir(js, { depth: null, colors: typeof args.o == 'undefined' })
         console.error('')

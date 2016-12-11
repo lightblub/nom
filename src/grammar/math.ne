@@ -10,16 +10,21 @@ exprList -> expression ("," ___ expression):* {% d => {
 } %}
 
 # Brackets
-B_ -> "(" _ AS _ ")"  {% d => [d[2]] %}
-Bs -> __ exprList _   {% d => d[1] %}
-B  -> B_              {% d => d[0][0] %}
-    | num B_          {% d => ['*', d[0], d[1][0]] %}
-    | ident Bs        {% d => ['call', d[0], d[1]] %}
-    | ident           {% d => ['call', d[0], []] %}
-    | literal         {% d => d[0] %}
+B_ -> "(" _ AS _ ")" {% d => [d[2]] %}
+
+Bs -> "(" ___ exprList ___ ")" __ block {% d => [...d[2], d[6]] %}
+    | "(" ___ exprList ___ ")"          {% d => d[2] %}
+    | "(" ___ ")"                       {% d => [] %}
+    | "(" ___ ")" __ block              {% d => [d[4]] %}
+
+B  -> B_             {% d => d[0][0] %}
+    | num B_         {% d => ['*', d[0], d[1][0]] %}
+    | ident Bs       {% d => ['call', d[0], d[1]] %}
+    | ident          {% d => ['call', d[0], []] %}
+    | literal        {% d => d[0] %}
 
 # Indices (aka powers or exponents)
-I -> B "^" I         {% d => ['^', d[0], d[2]] %}
+I -> B _ "^" _ I     {% d => ['^', d[0], d[4]] %}
    | B               {% d => d[0] %}
 
 # Division & Multiplication

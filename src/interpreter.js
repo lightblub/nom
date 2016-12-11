@@ -119,10 +119,8 @@ class NomEnvironment {
 module.exports = {
   NomEnvironment,
 
-  interpret: syn => new Promise((resolve, reject) => {
+  interpret: syn => {
     const env = new NomEnvironment
     env.interpStatements(syn)
-
-    resolve()
-  })
+  }
 }

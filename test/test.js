@@ -10,7 +10,7 @@ describe('parser', () => {
   describe('literals', () => {
     describe('strings', () => {
       it('double quoted', () =>
-        parser.parse(`"hello"`).should.eventually.deep.equal(
+        parser.parse(`"hello"`).should.deep.equal(
           [
             ['expr', [
               'string',
@@ -21,7 +21,7 @@ describe('parser', () => {
       )
 
       it('single quoted', () =>
-        parser.parse(`'hello'`).should.eventually.deep.equal(
+        parser.parse(`'hello'`).should.deep.equal(
           [
             ['expr', [
               'string',
@@ -32,7 +32,7 @@ describe('parser', () => {
       )
 
       it('backslash escapes', () =>
-        parser.parse(`"Hello, \\"World\\"!"`).should.eventually.deep.equal(
+        parser.parse(`"Hello, \\"World\\"!"`).should.deep.equal(
           [
             ['expr', [
               'string',
@@ -45,7 +45,7 @@ describe('parser', () => {
 
     describe('numbers', () => {
       it('integers', () =>
-        parser.parse(`25`).should.eventually.deep.equal(
+        parser.parse(`25`).should.deep.equal(
           [
             ['expr', [
               'num',
@@ -56,7 +56,7 @@ describe('parser', () => {
       )
 
       it('floats', () =>
-        parser.parse(`3.14`).should.eventually.deep.equal(
+        parser.parse(`3.14`).should.deep.equal(
           [
             ['expr', [
               'num',
@@ -67,7 +67,7 @@ describe('parser', () => {
       )
 
       it('negatives', () =>
-        parser.parse(`-1`).should.eventually.deep.equal(
+        parser.parse(`-1`).should.deep.equal(
           [
             ['expr', [
               '-', // negative numbers are technically (0 - n)
@@ -87,7 +87,7 @@ describe('parser', () => {
 
     describe('identifiers', () => {
       it('variables', () =>
-        parser.parse(`some_variable`).should.eventually.deep.equal(
+        parser.parse(`some_variable`).should.deep.equal(
           [
             ['expr', [
               'call',
@@ -102,7 +102,7 @@ describe('parser', () => {
       )
 
       it('classes', () =>
-        parser.parse(`SomeClass`).should.eventually.deep.equal(
+        parser.parse(`SomeClass`).should.deep.equal(
           [
             ['expr', [
               'call',
@@ -117,7 +117,7 @@ describe('parser', () => {
       )
 
       it('constants', () =>
-        parser.parse(`SOME_CONSTANT`).should.eventually.deep.equal(
+        parser.parse(`SOME_CONSTANT`).should.deep.equal(
           [
             ['expr', [
               'call',
@@ -132,7 +132,7 @@ describe('parser', () => {
       )
 
       it('paths', () =>
-        parser.parse(`a.b.c.d`).should.eventually.deep.equal(
+        parser.parse(`a.b.c.d`).should.deep.equal(
           [
             ['expr', [
               'call',
@@ -163,7 +163,7 @@ describe('parser', () => {
 
     describe('blocks', () => {
       it('empty', () =>
-        parser.parse(`{}`).should.eventually.deep.equal(
+        parser.parse(`{}`).should.deep.equal(
           [
             ['expr', [
               'block',
@@ -177,7 +177,7 @@ describe('parser', () => {
         parser.parse(`{
           pls
           work
-        }`).should.eventually.deep.equal(
+        }`).should.deep.equal(
           [
             ['expr', [
               'block',
@@ -211,7 +211,7 @@ describe('parser', () => {
       )
 
       it('method definition', () =>
-        parser.parse(`def method() {}`).should.eventually.deep.equal(
+        parser.parse(`def method() {}`).should.deep.equal(
           [
             ['methodDef',
               [
@@ -229,7 +229,7 @@ describe('parser', () => {
       )
 
       it('method definition w/ arguments', () =>
-        parser.parse(`def method(arg1, arg2) {}`).should.eventually.deep.equal(
+        parser.parse(`def method(arg1, arg2) {}`).should.deep.equal(
           [
             ['methodDef',
               [
@@ -259,7 +259,7 @@ describe('parser', () => {
 
   describe('maths', () => {
     it('addition', () =>
-      parser.parse(`1 + 2`).should.eventually.deep.equal(
+      parser.parse(`1 + 2`).should.deep.equal(
         [
           ['expr', [
             '+',
@@ -277,7 +277,7 @@ describe('parser', () => {
     )
 
     it('subtraction', () =>
-      parser.parse(`8 - 12`).should.eventually.deep.equal(
+      parser.parse(`8 - 12`).should.deep.equal(
         [
           ['expr', [
             '-',
@@ -295,7 +295,7 @@ describe('parser', () => {
     )
 
     it('multiplication', () =>
-      parser.parse(`21.9 * 2.4`).should.eventually.deep.equal(
+      parser.parse(`21.9 * 2.4`).should.deep.equal(
         [
           ['expr', [
             '*',
@@ -313,7 +313,7 @@ describe('parser', () => {
     )
 
     it('division', () =>
-      parser.parse(`3 / 4`).should.eventually.deep.equal(
+      parser.parse(`3 / 4`).should.deep.equal(
         [
           ['expr', [
             '/',
@@ -331,7 +331,7 @@ describe('parser', () => {
     )
 
     it('powers', () => // aka exponents or indices
-      parser.parse(`2^1`).should.eventually.deep.equal(
+      parser.parse(`2^1`).should.deep.equal(
         [
           ['expr', [
             '^',
@@ -349,7 +349,7 @@ describe('parser', () => {
     )
 
     it('implied multiplication', () =>
-      parser.parse(`2(4 + 8)`).should.eventually.deep.equal(
+      parser.parse(`2(4 + 8)`).should.deep.equal(
         [
           ['expr', [
             '*',
@@ -374,7 +374,7 @@ describe('parser', () => {
     )
 
     it('order of operations', () => // BIDMAS, PEMDAS
-      parser.parse(`(18 + 2) * 4 / 6.2`).should.eventually.deep.equal(
+      parser.parse(`(18 + 2) * 4 / 6.2`).should.deep.equal(
         [
           ['expr', [
             '/',
@@ -407,7 +407,7 @@ describe('parser', () => {
 
     describe('function calls', () => {
       it('no arguments, implied', () =>
-        parser.parse(`foo`).should.eventually.deep.equal(
+        parser.parse(`foo`).should.deep.equal(
           [
             ['expr', [
               'call',
@@ -424,7 +424,7 @@ describe('parser', () => {
       )
 
       it('no arguments', () =>
-        parser.parse(`foo()`).should.eventually.deep.equal(
+        parser.parse(`foo()`).should.deep.equal(
           [
             ['expr', [
               'call',
@@ -441,7 +441,7 @@ describe('parser', () => {
       )
 
       it('single', () =>
-        parser.parse(`bar(6)^2`).should.eventually.deep.equal(
+        parser.parse(`bar(6)^2`).should.deep.equal(
           [
             ['expr', [
               '^',
@@ -472,7 +472,7 @@ describe('parser', () => {
       )
 
       it('multiple arguments', () =>
-        parser.parse(`baz(1, 2)`).should.eventually.deep.equal(
+        parser.parse(`baz(1, 2)`).should.deep.equal(
           [
             ['expr', [
               'call',
@@ -504,7 +504,7 @@ describe('parser', () => {
 
     describe('variable assignment', () => {
       it('single', () =>
-        parser.parse(`foo = 123`).should.eventually.deep.equal(
+        parser.parse(`foo = 123`).should.deep.equal(
           [
             ['varAssign',
               [
@@ -526,7 +526,7 @@ describe('parser', () => {
       )
 
       it('multiple', () =>
-        parser.parse(`foo = bar = 123`).should.eventually.deep.equal(
+        parser.parse(`foo = bar = 123`).should.deep.equal(
           [
             ['varAssign',
               [

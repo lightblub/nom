@@ -2,37 +2,35 @@ const grammar = require('./grammar/grammar')
 const nearley = require('nearley')
 
 module.exports = {
-  parse: code => new Promise((resolve, reject) => {
+  parse: code => {
     const p = new nearley.Parser(grammar.ParserRules, grammar.ParserStart)
 
-    try {
-      p.feed(code)
+    p.feed(code)
 
-      let already = []
-      const results = p.results.filter(tree => {
-        // Remove duplicates.
-        // I probably shouldn't do this, but does it matter..?
+    let already = []
+    const results = p.results.filter(tree => {
+      // Remove duplicates.
+      // I probably shouldn't do this, but does it matter..?
 
-        const treeJSON = JSON.stringify(tree)
-        if (already.includes(treeJSON)) return false
-        else {
-          already.push(treeJSON)
-          return true
-        }
-      })
+      if (tree === null) return false
 
-      if (results.length > 1) {
-        for (let tree of results) {
-          console.error(JSON.stringify(tree)/*require('util').inspect(tree, { colors: true, depth: null })*/, '\n\n_________\n\n')
-        }
-
-        console.error(`WARN: ambiguous grammar (${results.length}) ^\n\n`)
+      const treeJSON = JSON.stringify(tree)
+      if (already.includes(treeJSON)) return false
+      else {
+        already.push(treeJSON)
+        return true
       }
-      if (results.length === 0) throw new SyntaxError('Empty')
+    })
 
-      resolve(results[0])
-    } catch (err) {
-      reject(err)
+    if (results.length > 1) {
+      for (let tree of results) {
+        console.error(JSON.stringify(tree)/*require('util').inspect(tree, { colors: true, depth: null })*/, '\n\n_________\n\n')
+      }
+
+      console.error(`WARN: ambiguous grammar (${results.length}) ^\n\n`)
     }
-  })
+    if (results.length === 0) throw new SyntaxError('Empty')
+
+    return results[0]
+  }
 }

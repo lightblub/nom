@@ -5,6 +5,7 @@ const request = require('request')
 const chalk = require('chalk')
 const center = require('center-text')
 const fs = require('fs')
+const readline = require('readline-sync')
 const os = require('os')
 const args = require('minimist')(process.argv.slice(2), {
   boolean: ['version', 'help', 'tree'],
@@ -61,34 +62,61 @@ if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
 `))
     console.log(center(`nom ${chalk.cyan('v' + version)}\n`, { columns: 28 }))
   } else if (command === 'upgrade') {
-    if (NPM) {
-      require('child_process').execSync('npm upgrade -g nomlang', { stdio: 'inherit' })
-      return
-    }
+    if (readline.keyInYN(chalk.cyan('  Upgrade nom to latest?'))) {
+      if (NPM) {
+        process.stdout.write('\n')
+        require('child_process').execSync('npm upgrade -g nomlang', { stdio: 'inherit' })
+        process.exit()
+      }
 
-    if (WINDOWS) {
-      require('child_process').execSync('@powershell -Command "Invoke-WebRequest http://raw.githubusercontent.com/nanalan/nom/master/install.bat -OutFile %USERPROFILE%\.nom.bat; Start-Process \"cmd.exe\" \"/c %USERPROFILE%\.nom.bat\""', { stdio: 'inherit' })
+      if (WINDOWS) {
+        require('child_process').execSync('@powershell -Command "Invoke-WebRequest http://raw.githubusercontent.com/nanalan/nom/master/install.bat -OutFile %USERPROFILE%\.nom.bat; Start-Process \"cmd.exe\" \"/c %USERPROFILE%\.nom.bat\""', { stdio: 'inherit' })
+      } else {
+        request('https://raw.githubusercontent.com/nanalan/nom/master/install.sh', (err, res, body) => {
+          if (!err && res.statusCode == 200) {
+            require('child_process').execSync('rm -rf ~/.nom', { stdio: 'inherit' })
+            fs.writeFileSync(`${os.homedir()}/.nom.sh`, body, 'utf8')
+            require('child_process').execSync('sh ~/.nom.sh && rm -rf ~/.nom.sh', {
+              stdio: 'inherit'
+            })
+            process.exit()
+          } else console.error(chalk.red(err))
+        })
+      }
     } else {
-      request('https://raw.githubusercontent.com/nanalan/nom/master/install.sh', (err, res, body) => {
-        if (!err && res.statusCode == 200) {
-          require('child_process').execSync('rm -rf ~/.nom', { stdio: 'inherit' })
-          fs.writeFileSync(`${os.homedir()}/.nom.sh`, body, 'utf8')
-          require('child_process').execSync('sh ~/.nom.sh && rm -rf ~/.nom.sh', {
-            stdio: 'inherit'
-          })
-        } else console.error(chalk.red(err))
-      })
+      process.stdout.write('\n')
     }
-  } else if (args.h || command === '') {
+  } else if (args.h) {
     console.log(`  ${chalk.cyan(`nom ${chalk.bold('file.nom')}`)}    run ${chalk.bold('file.nom')}
-  ${chalk.blue(`          -h`)}    ${chalk.dim('help')}
-  ${chalk.blue(`          -v`)}    ${chalk.dim('version')}
   ${chalk.blue(`          -t`)}    ${chalk.dim('tree')}
 
    ${chalk.cyan(`nom upgrade`)}    upgrade to the latest version of nom
+
+           ${chalk.cyan(`nom`)}    repl
+  ${chalk.blue(`          -h`)}    ${chalk.dim('help')}
+  ${chalk.blue(`          -v`)}    ${chalk.dim('version')}
 `)
+  } else if (command === '') {
+    console.log(chalk.cyan(`  nom repl v${version}`))
+    console.log(chalk.blue(`  use ${chalk.bold(`.exit`)} to quit\n`))
+    readline.promptLoop(input => {
+      const nom = require('../src/index.js')
+
+      process.stdout.write(chalk.styles.cyan.close)
+
+      if (input === '.exit') {
+        console.log(chalk.blue('\n  bye\n'))
+        return true
+      }
+
+      process.stdout.write('\n')
+      execute(input, {
+        ondone: () => process.stdout.write('\n')
+      })
+    }, {
+      prompt: chalk.blue.bold('  > ') + chalk.styles.cyan.open
+    })
   } else {
-    const nom = require('../src/index.js')
     const normalizeNewline = require('normalize-newline')
 
     chalk.enabled = true
@@ -100,37 +128,50 @@ if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
       process.exit(1)
     }
 
-    nom(src, args)
-      .catch(err => {
-        if (err.offset) {
-          const getLineFromPos = require('get-line-from-pos')
-          const leftPad = require('left-pad')
-
-          const lines = src.split('\n')
-          const lineNo = getLineFromPos(src, err.offset)
-          const lineNoLen = lines.length.toString().length
-          const offsetLine = err.offset - lines.slice(0, lineNo-1).join('\n').length
-
-          console.error('  ' + chalk.bgRed.white.bold(' SYNTAX ERROR!! ') + chalk.bgWhite.red.bold(` Unexpected ${src[err.offset] === '\n' ? '↵' : src[err.offset]} on line ${lineNo} `) + '\n')
-
-          const nearbyLines = [lineNo - 3, lineNo - 2, lineNo - 1].filter(n => n < lines.length && n >= 0)
-          for (let n of nearbyLines) {
-            let content = lines[n]
-            console.error(chalk.blue(`  ${leftPad(n+1, lineNoLen)} ${chalk.cyan(content)}`))
-          }
-
-          console.error(chalk.bold.red(`  ${' '.repeat(offsetLine+lineNoLen+(lineNo === 1 ? 1 : 0))}^\n`))
-          process.exit(1)
-        } else {
-          if (err instanceof Error) console.error(err)
-          else {
-            console.error('  ' + chalk.bgRed.white.bold(` ${err.type}!! `) + chalk.bgWhite.red.bold(` ${err.message} `) + '\n')
-            if (err.help) console.error(chalk.blue('  ' + err.help.replace('\n', '\n  ') + '\n'))
-          }
-
-          process.exit(1)
-        }
-      })
-      .then(process.exit)
+    execute(src, args)
+    process.exit(0)
   }
 })
+
+function execute(src, args) {
+  const errHandler = err => {
+    if (err.offset) {
+      const getLineFromPos = require('get-line-from-pos')
+      const leftPad = require('left-pad')
+
+      const lines = src.split('\n')
+      const lineNo = getLineFromPos(src, err.offset)
+      const lineNoLen = lines.length.toString().length
+      const offsetLine = err.offset - lines.slice(0, lineNo-1).join('\n').length
+
+      console.error('  ' + chalk.bgRed.white.bold(' SYNTAX ERROR!! ') + chalk.bgWhite.red.bold(` Unexpected ${src[err.offset] === '\n' ? '↵' : src[err.offset]} on line ${lineNo} `) + '\n')
+
+      const nearbyLines = [lineNo - 3, lineNo - 2, lineNo - 1].filter(n => n < lines.length && n >= 0)
+      for (let n of nearbyLines) {
+        let content = lines[n]
+        console.error(chalk.blue(`  ${leftPad(n+1, lineNoLen)} ${chalk.cyan(content)}`))
+      }
+
+      console.error(chalk.bold.red(`  ${' '.repeat(offsetLine+lineNoLen+(lineNo === 1 ? 1 : 0))}^\n`))
+      if (!args.sync) process.exit(1)
+    } else {
+      if (err instanceof Error) console.error(err)
+      else {
+        console.error('  ' + chalk.bgRed.white.bold(` ${err.type}!! `) + chalk.bgWhite.red.bold(` ${err.message} `) + '\n')
+        if (err.help) console.error(chalk.blue('  ' + err.help.replace('\n', '\n  ') + '\n'))
+      }
+
+      if (!args.sync) process.exit(1)
+    }
+  }
+
+  const nom = require('../src/index.js')
+
+  try {
+    nom(src, args)
+    if (args.ondone) args.ondone()
+  } catch(err) {
+    errHandler(err)
+    if (args.onerr) args.onerr()
+  }
+}

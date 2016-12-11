@@ -16,6 +16,7 @@ const args = require('minimist')(process.argv.slice(2), {
 })
 const command = args._.join(' ')
 const WINDOWS = os.platform() === 'win32'
+const NPM = !fs.existsSync(os.homedir() + '/.nom')
 
 if (command === 'hello') {
   // Used in install script
@@ -43,7 +44,7 @@ if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
       if (version !== remoteVersion) {
         console.error(chalk.cyan('\n  A new version of nom is available!'))
         console.error(center(chalk.blue(`v${version} -> v${remoteVersion}`), { columns: 36 }))
-        console.error(chalk.cyan(`  Run ${chalk.bold(`nom update`)} to update.\n`))
+        console.error(chalk.cyan(`  Use ${chalk.bold(`nom upgrade`)} to update nom.\n`))
       } else console.log(chalk.blue('  No updates found.\n'))
     } catch (err) {}
   } else {
@@ -59,14 +60,19 @@ if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
   |_| |_|\\___/|_| |_| |_|
 `))
     console.log(center(`nom ${chalk.cyan('v' + version)}\n`, { columns: 28 }))
-  } else if (command === 'update') {
+  } else if (command === 'upgrade') {
+    if (NPM) {
+      require('child_process').execSync('npm upgrade -g nomlang', { stdio: 'inherit' })
+      return
+    }
+
     if (WINDOWS) {
       require('child_process').execSync('@powershell -Command "Invoke-WebRequest http://raw.githubusercontent.com/nanalan/nom/master/install.bat -OutFile %USERPROFILE%\.nom.bat; Start-Process \"cmd.exe\" \"/c %USERPROFILE%\.nom.bat\""', { stdio: 'inherit' })
     } else {
       request('https://raw.githubusercontent.com/nanalan/nom/master/install.sh', (err, res, body) => {
         if (!err && res.statusCode == 200) {
           require('child_process').execSync('rm -rf ~/.nom', { stdio: 'inherit' })
-          fs.writeFileSync(`${process.env.HOME}/.nom.sh`, body, 'utf8')
+          fs.writeFileSync(`${os.homedir()}/.nom.sh`, body, 'utf8')
           require('child_process').execSync('sh ~/.nom.sh && rm -rf ~/.nom.sh', {
             stdio: 'inherit'
           })
@@ -79,7 +85,7 @@ if (needsUpdateCheck) console.log(chalk.blue('\n  Checking for updates...'))
   ${chalk.blue(`          -v`)}    ${chalk.dim('version')}
   ${chalk.blue(`          -t`)}    ${chalk.dim('tree')}
 
-    ${chalk.cyan(`nom update`)}    update to the latest version
+   ${chalk.cyan(`nom upgrade`)}    upgrade to the latest version of nom
 `)
   } else {
     const nom = require('../src/index.js')

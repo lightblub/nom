@@ -66,3 +66,4 @@ ECHO.
 ECHO|set /p="  Installed nom v"
 nom hello
 ECHO.
+DEL %USERPROFILE%\.nom.bat

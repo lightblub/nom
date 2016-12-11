@@ -91,40 +91,10 @@ describe('parser', () => {
           [
             ['expr', [
               'call',
-              [
+              [[
                 'variable',
                 'some_variable'
-              ],
-              []
-            ]]
-          ]
-        )
-      )
-
-      it('classes', () =>
-        parser.parse(`SomeClass`).should.deep.equal(
-          [
-            ['expr', [
-              'call',
-              [
-                'class',
-                'SomeClass'
-              ],
-              []
-            ]]
-          ]
-        )
-      )
-
-      it('constants', () =>
-        parser.parse(`SOME_CONSTANT`).should.deep.equal(
-          [
-            ['expr', [
-              'call',
-              [
-                'constant',
-                'SOME_CONSTANT'
-              ],
+              ]],
               []
             ]]
           ]
@@ -137,21 +107,24 @@ describe('parser', () => {
             ['expr', [
               'call',
               [
+                'path',
                 [
-                  'variable',
-                  'a'
-                ],
-                [
-                  'variable',
-                  'b'
-                ],
-                [
-                  'variable',
-                  'c'
-                ],
-                [
-                  'variable',
-                  'd'
+                  [
+                    'variable',
+                    'a'
+                  ],
+                  [
+                    'variable',
+                    'b'
+                  ],
+                  [
+                    'variable',
+                    'c'
+                  ],
+                  [
+                    'variable',
+                    'd'
+                  ]
                 ]
               ],
               []
@@ -187,8 +160,10 @@ describe('parser', () => {
                   [
                     'call',
                     [
-                      'variable',
-                      'pls'
+                      [
+                        'variable',
+                        'pls'
+                      ]
                     ],
                     []
                   ]
@@ -198,8 +173,10 @@ describe('parser', () => {
                   [
                     'call',
                     [
-                      'variable',
-                      'work'
+                      [
+                        'variable',
+                        'work'
+                      ]
                     ],
                     []
                   ]
@@ -214,10 +191,10 @@ describe('parser', () => {
         parser.parse(`def method() {}`).should.deep.equal(
           [
             ['methodDef',
-              [
+              [[
                 'variable',
                 'method'
-              ],
+              ]],
               [],
               [
                 "block",
